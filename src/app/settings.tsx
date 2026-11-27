@@ -1,3 +1,4 @@
+import Constants from 'expo-constants';
 import * as DocumentPicker from 'expo-document-picker';
 import { router } from 'expo-router';
 import { Check, ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react-native';
@@ -121,7 +122,9 @@ export default function SettingsScreen() {
           </Pressable>
           <View style={[styles.row, { borderBottomWidth: 0 }]}>
             <ThemedText type="smallBold" style={styles.rowLabel}>App version</ThemedText>
-            <ThemedText themeColor="textSecondary" type="small">v1.0.0</ThemedText>
+            <ThemedText themeColor="textSecondary" type="small">
+              v{Constants.expoConfig?.version ?? Constants.manifest2?.extra?.expoClient?.version ?? '1.0.0'}
+            </ThemedText>
           </View>
         </View>
       </ScrollView>
