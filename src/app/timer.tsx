@@ -222,7 +222,7 @@ export default function TimerScreen() {
           </View>
         </View>
       ) : (
-        <ScrollView contentContainerStyle={styles.content}>
+        <View style={styles.setupContainer}>
           <View style={styles.displayArea}>
             <ThemedText style={styles.display}>{display}</ThemedText>
           </View>
@@ -256,7 +256,7 @@ export default function TimerScreen() {
             </Pressable>
           </View>
 
-          <View style={styles.presets}>
+          <ScrollView contentContainerStyle={styles.presets} showsVerticalScrollIndicator={false}>
             <Pressable
               accessibilityRole="button"
               onPress={() => applyPreset(300)}
@@ -311,8 +311,8 @@ export default function TimerScreen() {
               <Plus color={theme.text} size={20} strokeWidth={2} />
               <ThemedText type="smallBold">Add timer</ThemedText>
             </Pressable>
-          </View>
-        </ScrollView>
+          </ScrollView>
+        </View>
       )}
     </View>
   );
@@ -328,6 +328,7 @@ const styles = StyleSheet.create({
   menuBackdrop: { flex: 1, alignItems: 'flex-end', paddingTop: 100, paddingRight: Spacing.four },
   menu: { borderWidth: StyleSheet.hairlineWidth, borderRadius: Spacing.two, minWidth: 140, elevation: 4 },
   menuItem: { paddingHorizontal: Spacing.three, paddingVertical: Spacing.two },
+  setupContainer: { flex: 1, paddingHorizontal: Spacing.three, paddingBottom: Spacing.two, gap: Spacing.three },
   content: { paddingHorizontal: Spacing.three, paddingBottom: Spacing.six, gap: Spacing.four },
   displayArea: { alignItems: 'center', paddingVertical: Spacing.two },
   display: { fontSize: 48, lineHeight: 56, fontWeight: '700', fontVariant: ['tabular-nums'] },

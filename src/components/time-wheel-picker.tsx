@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { ScrollView, type NativeScrollEvent, type NativeSyntheticEvent, StyleSheet, View } from 'react-native';
+import { FlatList, type NativeScrollEvent, type NativeSyntheticEvent, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
@@ -31,7 +31,7 @@ export function TimeWheelPicker({
   fontSize = 28,
 }: Props) {
   const theme = useTheme();
-  const scrollRef = useRef<any>(null);
+  const listRef = useRef<FlatList<number>>(null);
   const selectedIndex = Math.max(0, values.indexOf(selected));
   const padding = useMemo(() => ((visibleItems - 1) / 2) * itemHeight, [itemHeight, visibleItems]);
 
@@ -50,7 +50,7 @@ export function TimeWheelPicker({
 
   useEffect(() => {
     const index = (loop ? middleOffset : 0) + selectedIndex;
-    scrollRef.current?.scrollTo({ y: index * itemHeight, animated: false });
+    listRef.current?.scrollToOffset({ offset: index * itemHeight, animated: false });
   }, [itemHeight, loop, middleOffset, selectedIndex]);
 
   const onMomentumEnd = useCallback(
@@ -67,7 +67,7 @@ export function TimeWheelPicker({
         if (clamped < minSafe || clamped > maxSafe) {
           const recentered = middleOffset + actualIndex;
           requestAnimationFrame(() => {
-            scrollRef.current?.scrollTo({ y: recentered * itemHeight, animated: false });
+            listRef.current?.scrollToOffset({ offset: recentered * itemHeight, animated: false });
           });
         }
       }
@@ -89,24 +89,30 @@ export function TimeWheelPicker({
           },
         ]}
       />
-      <ScrollView
-        ref={scrollRef}
+      <FlatList
+        ref={listRef}
+        data={data}
+        keyExtractor={(item, index) => `${item}-${index}`}
         showsVerticalScrollIndicator={false}
         snapToInterval={itemHeight}
         decelerationRate="fast"
         bounces={!loop}
         nestedScrollEnabled
+        windowSize={7}
+        maxToRenderPerBatch={15}
+        initialNumToRender={15}
+        removeClippedSubviews
+        getItemLayout={(_, index) => ({ length: itemHeight, offset: itemHeight * index, index })}
         onMomentumScrollEnd={onMomentumEnd}
         onScrollEndDrag={(e) => {
           const vy = Math.abs(e.nativeEvent.velocity?.y ?? 0);
           if (vy < 0.1) onMomentumEnd(e);
         }}
         contentContainerStyle={{ paddingVertical: padding }}
-      >
-        {data.map((item, index) => {
+        renderItem={({ item }) => {
           const isSelected = item === selected;
           return (
-            <View key={`${item}-${index}`} style={[styles.item, { height: itemHeight }]}>
+            <View style={[styles.item, { height: itemHeight }]}>
               <ThemedText
                 style={{
                   fontSize,
@@ -120,8 +126,8 @@ export function TimeWheelPicker({
               </ThemedText>
             </View>
           );
-        })}
-      </ScrollView>
+        }}
+      />
     </View>
   );
 }

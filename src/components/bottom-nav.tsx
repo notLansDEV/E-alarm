@@ -1,5 +1,6 @@
 import { Link, usePathname } from 'expo-router';
 import { AlarmClock, Clock, Hourglass, Timer } from 'lucide-react-native';
+import { memo } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -14,7 +15,7 @@ const tabs = [
   { href: '/timer', label: 'Timer', Icon: Hourglass },
 ] as const;
 
-export function BottomNav() {
+export const BottomNav = memo(function BottomNav() {
   const pathname = usePathname();
   const insets = useSafeAreaInsets();
   const theme = useTheme();
@@ -24,7 +25,7 @@ export function BottomNav() {
       style={[
         styles.container,
         {
-          paddingBottom: insets.bottom + Spacing.two,
+          paddingBottom: insets.bottom + Spacing.three,
           backgroundColor: theme.background,
           borderTopColor: theme.backgroundSelected,
         },
@@ -58,13 +59,13 @@ export function BottomNav() {
       </View>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {
     borderTopWidth: StyleSheet.hairlineWidth,
     paddingHorizontal: Spacing.three,
-    paddingTop: Spacing.two,
+    paddingTop: Spacing.three,
   },
   row: {
     flexDirection: 'row',
@@ -76,7 +77,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.two,
-    paddingVertical: Spacing.two,
+    paddingVertical: Spacing.three,
     borderRadius: Spacing.three,
     borderWidth: StyleSheet.hairlineWidth,
   },

@@ -100,7 +100,7 @@ export default function ClockScreen() {
         </View>
 
         <ThemedText style={styles.digitalTime}>
-          {pad2(hours)}:{pad2(minutes)}:{pad2(seconds)}
+          {pad2(hours === 0 ? 24 : hours)}:{pad2(minutes)}:{pad2(seconds)}
         </ThemedText>
       </View>
     </View>

@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { AlarmClock, Check, Headphones, MoreVertical, Plus, Trash2, X } from 'lucide-react-native';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, Modal, Pressable, StyleSheet, Switch, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -55,6 +55,64 @@ function getNextAlarmLabel(alarms: Alarm[], now: Date) {
   const minutes = totalMinutes % 60;
   return `Alarm in ${hours} hours ${minutes} minutes`;
 }
+
+type AlarmRowProps = {
+  alarm: Alarm;
+  selected: boolean;
+  selectionMode: boolean;
+  textColor: string;
+  mutedColor: string;
+  bg: string;
+  selectedBg: string;
+  border: string;
+  selectedBorder: string;
+  checkColor: string;
+  onLongPress: (id: string) => void;
+  onPress: (alarm: Alarm) => void;
+  onToggleSelect: (id: string) => void;
+  onToggle: (id: string, enabled: boolean) => void;
+};
+
+const AlarmRow = memo(function AlarmRow({
+  alarm, selected, selectionMode, textColor, mutedColor, bg, selectedBg, border, selectedBorder, checkColor,
+  onLongPress, onPress, onToggleSelect, onToggle,
+}: AlarmRowProps) {
+  const details = [alarm.label.trim(), repeatSummary(alarm.repeat, alarm.customDays)].filter(Boolean).join(' · ');
+  const rowStyle = [styles.alarmRow, { backgroundColor: selected ? selectedBg : bg, borderColor: selected ? selectedBorder : border }];
+
+  const content = (
+    <>
+      {selectionMode ? (
+        <View style={[styles.selectCircle, { borderColor: selected ? selectedBorder : mutedColor, backgroundColor: selected ? selectedBorder : 'transparent' }]}>
+          {selected ? <Check color={checkColor} size={14} strokeWidth={2.5} /> : null}
+        </View>
+      ) : null}
+      <View style={styles.alarmInfo}>
+        <ThemedText style={[styles.alarmTime, { color: alarm.enabled ? textColor : mutedColor }]}>
+          {formatTime(alarm.hour, alarm.minute)}
+        </ThemedText>
+        <ThemedText themeColor="textSecondary" type="small" numberOfLines={1}>
+          {details || 'Alarm'}
+        </ThemedText>
+      </View>
+    </>
+  );
+
+  if (selectionMode) {
+    return (
+      <Pressable accessibilityRole="button" accessibilityLabel={`Select alarm ${formatTime(alarm.hour, alarm.minute)}`} onPress={() => onToggleSelect(alarm.id)} style={rowStyle}>
+        {content}
+      </Pressable>
+    );
+  }
+
+  return (
+    <Pressable accessibilityRole="button" accessibilityLabel={`Edit alarm ${formatTime(alarm.hour, alarm.minute)}`} delayLongPress={250} onLongPress={() => onLongPress(alarm.id)} onPress={() => onPress(alarm)} style={rowStyle}>
+      {content}
+      <Switch value={alarm.enabled} onValueChange={(value) => onToggle(alarm.id, value)} accessibilityLabel={`Toggle alarm ${formatTime(alarm.hour, alarm.minute)}`} />
+    </Pressable>
+  );
+});
 
 export default function AlarmScreen() {
   const theme = useTheme();
@@ -219,67 +277,24 @@ export default function AlarmScreen() {
             data={sortedAlarms}
             keyExtractor={(item) => item.id}
             contentContainerStyle={styles.listContent}
-            renderItem={({ item }) => {
-              const details = [item.label.trim(), repeatSummary(item.repeat, item.customDays)].filter(Boolean).join(' · ');
-              const selected = selectedIds.has(item.id);
-
-              const content = (
-                <>
-                  {selectionMode ? (
-                    <View style={[styles.selectCircle, { borderColor: selected ? theme.text : theme.textSecondary, backgroundColor: selected ? theme.text : 'transparent' }]}>
-                      {selected ? <Check color={theme.background} size={14} strokeWidth={2.5} /> : null}
-                    </View>
-                  ) : null}
-                  <View style={styles.alarmInfo}>
-                    <ThemedText style={[styles.alarmTime, { color: item.enabled ? theme.text : theme.textSecondary }]}>
-                      {formatTime(item.hour, item.minute)}
-                    </ThemedText>
-                    <ThemedText themeColor="textSecondary" type="small" numberOfLines={1}>
-                      {details || 'Alarm'}
-                    </ThemedText>
-                  </View>
-                </>
-              );
-
-              const rowStyle = [
-                styles.alarmRow,
-                {
-                  backgroundColor: selected ? theme.backgroundSelected : theme.backgroundElement,
-                  borderColor: selected ? theme.text : theme.backgroundSelected,
-                },
-              ];
-
-              if (selectionMode) {
-                return (
-                  <Pressable
-                    accessibilityRole="button"
-                    accessibilityLabel={`Select alarm ${formatTime(item.hour, item.minute)}`}
-                    onPress={() => toggleSelect(item.id)}
-                    style={rowStyle}
-                  >
-                    {content}
-                  </Pressable>
-                );
-              }
-
-              return (
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel={`Edit alarm ${formatTime(item.hour, item.minute)}`}
-                  delayLongPress={250}
-                  onLongPress={() => enterSelectionMode(item.id)}
-                  onPress={() => openEditSheet(item)}
-                  style={rowStyle}
-                >
-                  {content}
-                  <Switch
-                    value={item.enabled}
-                    onValueChange={(value) => toggleAlarm(item.id, value)}
-                    accessibilityLabel={`Toggle alarm ${formatTime(item.hour, item.minute)}`}
-                  />
-                </Pressable>
-              );
-            }}
+            renderItem={({ item }) => (
+              <AlarmRow
+                alarm={item}
+                selected={selectedIds.has(item.id)}
+                selectionMode={selectionMode}
+                textColor={theme.text}
+                mutedColor={theme.textSecondary}
+                bg={theme.backgroundElement}
+                selectedBg={theme.backgroundSelected}
+                border={theme.backgroundSelected}
+                selectedBorder={theme.text}
+                checkColor={theme.background}
+                onLongPress={enterSelectionMode}
+                onPress={openEditSheet}
+                onToggleSelect={toggleSelect}
+                onToggle={toggleAlarm}
+              />
+            )}
           />
         )}
       </View>
