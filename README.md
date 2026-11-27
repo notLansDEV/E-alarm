@@ -1,60 +1,21 @@
-<<<<<<< HEAD
-# Welcome to your Expo app 👋
+# E-Alarm
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+<p align="center">
+  <img src="./assets/images/icon.png" alt="E-Alarm app icon" width="120" />
+</p>
 
-## Get started
+E-Alarm is an Expo/React Native alarm clock app focused on earphone-aware alarms, with clock, stopwatch, and timer utilities.
 
-1. Install dependencies
+## Features
 
-   ```bash
-   npm install
-   ```
+- **Earphone-gated alarms**: alarm creation is blocked until earphones are detected (native module; dev/production build required).
+- **Alarm management**: create/edit alarms, repeat/custom days, ringtone selection, next-alarm countdown, multi-select delete.
+- **Clock**: analog clock with live digital time.
+- **Stopwatch**: start/pause/reset/laps, continues running across tab navigation.
+- **Timer**: scrollable H/M/S picker, circular progress, presets/custom presets, runs across tab navigation.
+- **Settings**: theme, system time/sound shortcuts, alarm/timer ringtone, auto silence, snooze, volume button action, lock-screen notification visibility, notification before ringing.
+- **Persistence**: alarms, settings, theme, and timer presets saved locally with AsyncStorage.
 
-2. Start the app
+## License
 
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
-
-### Other setup steps
-
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
-=======
-# E-alarm
->>>>>>> 41f74f18e9462e6e81c54d323953ca6cd89ac018
+[MIT](./LICENSE)

@@ -1,0 +1,9 @@
+{
+  "platforms": ["apple", "android", "web"],
+  "apple": {
+    "modules": ["EarphoneDetectorModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.earphonedetector.EarphoneDetectorModule"]
+  }
+}
