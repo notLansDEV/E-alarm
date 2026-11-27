@@ -2,6 +2,8 @@
 
 ## Project Context
 - **Framework:** React Native with Expo (`expo-router`, TypeScript, `expo-audio`, `expo-dev-client`).
+- **UI Toolkit:** Use `@expo/ui` for native UI components where appropriate (SwiftUI on iOS, Jetpack Compose on Android), paired with React Native/Expo components as needed.
+- **Icons:** Use `lucide-react-native` for all UI icons (no emoji icons, no mixed icon packs).
 - **Editor / Environment:** Zed IDE, targeting Android (and iOS where applicable) via a Development Build (`expo-dev-client`).
 - **Design Reference:** Inspired by clean mobile alarm clock layouts (`https://dribbble.com/shots/24165710-Alarm-Clock`), adapted into a crisp, minimal, utilitarian interface supporting both **Light** and **Dark** modes.
 
@@ -31,6 +33,7 @@
 
 ### Principles
 - **Clean, intentional, high-contrast utility:** Avoid generic gradient cards, over-engineered glassmorphism, floating neon glows, or cluttered marketing badges.
+- **Native-first components:** Prefer `@expo/ui` components for native-feeling controls and surfaces where they fit; use React Native/Expo components when `@expo/ui` is not the right fit. Keep styling consistent across both.
 - **Clear visual hierarchy:** Large, legible tabular numerals for times; clear distinction between active and inactive alarms; unambiguous earphone status indicator.
 - **Light & Dark Mode First:** Support automatic system theme (`useColorScheme`) plus an optional manual Light / Dark / System toggle.
 
@@ -40,13 +43,21 @@
 - **Status & Accent:** Use a calm, restrained accent for primary actions/active states and clear muted/locked states when earphones are missing—avoiding loud or gimmicky styling.
 
 ### Key Screens & Components
-1. **Main Alarm Screen (`src/app/index.tsx`):**
+1. **App Top Bar (Global Navigation):**
+   - A clean top bar with three sections/buttons: **Alarm**, **Clock**, and **Stopwatch**.
+   - Use `lucide-react-native` icons for each action/tab (for example `AlarmClock`, `Clock`, `Timer`) with clear active/inactive states.
+   - Build with `@expo/ui` where appropriate, while keeping the bar minimal, high-contrast, and consistent in both Light and Dark modes.
+2. **Main Alarm Screen (`src/app/index.tsx`):**
    - **Header & Earphone Status Bar:** Shows whether earphones are connected (`Wired / Bluetooth Ready`) or disconnected (`Earphones Required`), plus theme switcher if desired.
    - **Alarm List:** Clean rows showing time, label/repeat info (if any), and an enable/start switch that is gated when earphones are disconnected.
    - **Add Alarm Action:** Prominent button to open the time picker/creator; disabled/locked with clear helper text when no earphones are connected.
-2. **Add / Edit Alarm Modal or Sheet:**
+3. **Clock Screen (`src/app/clock.tsx`):**
+   - Displays the current time in a clean, legible layout; can later include world clock/timezone support if needed.
+4. **Stopwatch Screen (`src/app/stopwatch.tsx`):**
+   - Provides start/pause/reset stopwatch controls with clear elapsed time display.
+5. **Add / Edit Alarm Modal or Sheet:**
    - Clean time selection (hours/minutes/period or native picker), optional label, and a **Save Alarm** action gated on active earphone connection.
-3. **Ringing / Active Alarm View:**
+6. **Ringing / Active Alarm View:**
    - Displays ringing time, earphone output status, **Snooze** (if supported), and **Dismiss / Stop**.
    - Automatically stops/mutes audio if earphones are unplugged rather than blasting through speakers.
 
@@ -57,7 +68,11 @@
 - `src/hooks/useEarphoneStatus.ts` — Exposes `isEarphoneConnected`, `routeType` (`'wired' | 'bluetooth' | 'none'`), and a `refreshEarphoneStatus()` check.
 - `src/services/alarmAudio.ts` — Manages `expo-audio` playback and enforces earphone-only output / stop-on-disconnect rules.
 - `src/theme/colors.ts` — Light and dark color tokens.
+- `src/components/top-bar.tsx` — Shared top navigation with `Alarm`, `Clock`, and `Stopwatch` buttons using `lucide-react-native` icons and `@expo/ui` where appropriate.
+- `src/app/_layout.tsx` — Root layout and shared app shell.
 - `src/app/index.tsx` — Primary alarm list, earphone gate banner, and add/toggle controls.
+- `src/app/clock.tsx` — Current time / clock screen.
+- `src/app/stopwatch.tsx` — Stopwatch screen.
 
 ---
 
@@ -66,4 +81,5 @@
 2. Ensure every add and start/enable action checks `isEarphoneConnected` before mutating state or scheduling/starting an alarm.
 3. Ensure audio playback logic explicitly stops or refuses speaker playback when `isEarphoneConnected` is `false`.
 4. Style both Light and Dark themes completely so neither mode has unreadable text or broken contrast.
-5. Note clearly where native code / `npx expo run:android` or `eas build` is required vs. UI layout testing.
+5. Use `@expo/ui` for native UI components where appropriate, and use `lucide-react-native` for icons consistently.
+6. Note clearly where native code / `npx expo run:android` or `eas build` is required vs. UI layout testing.

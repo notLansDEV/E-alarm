@@ -1,0 +1,9 @@
+{
+  "platforms": ["apple", "android", "web"],
+  "apple": {
+    "modules": ["VolumeButtonModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.volumebutton.VolumeButtonModule"]
+  }
+}
